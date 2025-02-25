@@ -528,7 +528,6 @@ tryfont(char *name)
 	f->prev = fontl.prev;
 	f->next->prev = f;
 	f->prev->next = f;
-print("Font is %s\n", name);
 	mksubfonts(f);
 	return f;
 }
