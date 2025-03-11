@@ -341,13 +341,13 @@ emptyglyph(TTFont *f, int glyph)
 
 	stbtt_GetGlyphHMetrics(f->info, glyph, &g->advanceWidthpx, &g->lsbpx);
 	g->xmax = g->advanceWidthpx;
-	g->advanceWidthpx = ttfrounddiv(g->advanceWidthpx * f->ppem * 64, f->emsize) >> 6;
+	g->advanceWidthpx = ttfrounddiv((g->advanceWidthpx) * f->ppem * 64, f->emsize) >> 6;
 	g->lsbpx = ttfrounddiv(g->lsbpx * f->ppem * 64, f->emsize) >> 6;
 	g->xmin = 0;
 	g->ymin = 0;
 	g->ymax = 1;
 	g->xminpx = 0;
-	g->xmaxpx = g->advanceWidthpx - g->lsbpx;
+	g->xmaxpx = g->advanceWidthpx;
 	g->yminpx = 0;
 	g->ymaxpx = 1;
 	return g;
@@ -364,10 +364,10 @@ ttfgetglyph(TTFont *f, int glyph)
 		return emptyglyph(f, glyph);
 	}
 /*	stbtt_GetGlyphBitmapBox(f->info, glyph, scale, scale, &g->xmin, &g->ymin, &g->xmax, &g->ymax);
-	g->xminpx = (float)g->xmin * scale;
-	g->xmaxpx = (float)g->xmax * scale;
-	g->yminpx = (float)g->ymin * scale;
-	g->ymaxpx = (float)g->ymax * scale;
+	g->xminpx = ((float)g->xmin) * scale;
+	g->xmaxpx = ((float)g->xmax) * scale;
+	g->yminpx = ((float)g->ymin) * scale;
+	g->ymaxpx = ((float)g->ymax) * scale;
 */
 	// The libttf code jumps through hoops to get these from the font points.  Needed or no?
 	stbtt_vertex *pt;
@@ -395,7 +395,7 @@ if (g->xminpx < 0) g->xminpx = 0;
 	stbtt_FreeShape(f->info, pt);
 
 	stbtt_GetGlyphHMetrics(f->info, glyph, &g->advanceWidthpx, &g->lsbpx);
-	g->advanceWidthpx = ttfrounddiv(g->advanceWidthpx * f->ppem * 64, f->emsize) >> 6;
+	g->advanceWidthpx = ttfrounddiv((g->advanceWidthpx) * f->ppem * 64, f->emsize) >> 6;
 	g->lsbpx = ttfrounddiv(g->lsbpx * f->ppem * 64, f->emsize) >> 6;
 
 	return g;
@@ -468,7 +468,7 @@ compilesub(TFont *f, TSubfont *s)
 		*p++ = h;
 		*p++ = gs[i]->xminpx;
 		if(gs[i]->advanceWidthpx != 0) 
-			*p++ = gs[i]->advanceWidthpx - gs[i]->lsbpx;
+			*p++ = gs[i]->advanceWidthpx;
 		else
 			*p++ = gs[i]->width;
 		x += gs[i]->width;
@@ -528,7 +528,6 @@ tryfont(char *name)
 	f->prev = fontl.prev;
 	f->next->prev = f;
 	f->prev->next = f;
-print("Font is %s\n", name);
 	mksubfonts(f);
 	return f;
 }
